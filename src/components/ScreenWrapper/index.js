@@ -90,6 +90,8 @@ class ScreenWrapper extends React.Component {
     render() {
         const maxHeight = this.props.shouldEnableMaxHeight ? this.props.windowHeight : undefined;
 
+        const minHeight = this.props.shouldEnableMinHeight ? this.props.initialHeight : undefined;
+
         return (
             <SafeAreaConsumer>
                 {({insets, paddingTop, paddingBottom, safeAreaPaddingBottomStyle}) => {
@@ -116,7 +118,7 @@ class ScreenWrapper extends React.Component {
                                 {...this.keyboardDissmissPanResponder.panHandlers}
                             >
                                 <KeyboardAvoidingView
-                                    style={[styles.w100, styles.h100, {maxHeight}]}
+                                    style={[styles.w100, styles.h100, {maxHeight, minHeight}]}
                                     behavior={this.props.keyboardAvoidingViewBehavior}
                                     enabled={this.props.shouldEnableKeyboardAvoidingView}
                                 >

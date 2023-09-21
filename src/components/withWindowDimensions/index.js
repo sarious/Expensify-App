@@ -36,18 +36,36 @@ const windowDimensionsProviderPropTypes = {
 function WindowDimensionsProvider(props) {
     const [windowDimension, setWindowDimension] = useState(() => {
         const initialDimensions = Dimensions.get('window');
+        const screenDimensions = Dimensions.get('screen');
+
         return {
             windowHeight: initialDimensions.height,
             windowWidth: initialDimensions.width,
+            screenHeight: screenDimensions.height,
+            screenWidth: screenDimensions.width,
+            initialHeight: initialDimensions.height,
+            initialWidth: initialDimensions.width,
         };
     });
 
     useEffect(() => {
         const onDimensionChange = (newDimensions) => {
-            const {window} = newDimensions;
-            setWindowDimension({
-                windowHeight: window.height,
-                windowWidth: window.width,
+            const {window, screen} = newDimensions;
+
+            setWindowDimension((oldState) => {
+                const newState = {
+                    ...oldState,
+                    windowHeight: window.height,
+                    windowWidth: window.width,
+                };
+                if (screen.width !== oldState.screenWidth || screen.height !== oldState.screenHeight || window.height > oldState.initialHeight) {
+                    newState.initialHeight = window.height;
+                    newState.initialWidth = window.width;
+                    newState.screenHeight = screen.height;
+                    newState.screenWidth = screen.width;
+                }
+
+                return newState;
             });
         };
 
@@ -75,6 +93,8 @@ function WindowDimensionsProvider(props) {
                         value={{
                             windowHeight: windowDimension.windowHeight + getWindowHeightAdjustment(insets),
                             windowWidth: windowDimension.windowWidth,
+                            initialHeight: windowDimension.initialHeight,
+                            initialWidth: windowDimension.initialWidth,
                             isExtraSmallScreenWidth,
                             isSmallScreenWidth,
                             isMediumScreenWidth,
